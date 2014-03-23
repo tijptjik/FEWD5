@@ -11,12 +11,32 @@
 // Suggest a next episode to watch.
 // --> https://trakt.tv/api-docs/show-episode-stats
 //     http://api.trakt.tv/show/episode/stats.format/apikey/title/season/episode
+//
+// Genres ["Animation", "Children", "Drama", "Horror", "Thriller", "Suspense",
+//         "Fantasy", "Comedy", "Action", "Adventure", "Mini Series", "Science Fiction",
+//         "Crime", "Documentary", "Mystery", "Western", "Family"]
+//
+// Genres: Science Fiction, Crime, Drama
+
+
+// Aired, Collected, Started, Completed
+
+// [O,O,O,O] = (unreleased)
+// [X,O,O,O] = .aired
+// [X,X,O,O] = .collected
+// [X,X,X,O] = .started
+// [X,X,X,X] = .completed
+
+// [X,!,X,O] = .aired:not(.collected).started (uncollected)
+// [X,X,!,O] = .aired.collected:not(.started) (unstarted)
+// [O,O,X,!] = .collected:not(.started) (started, not completed)
 
 var WL = (function($){
   var API_KEY = '8bde53c3108a625150ddd2b974395280',
       API_BASE = 'http://api.trakt.tv',
       API_FORMAT = 'json',
       TRAKT_USER = 'tijptjik';
+
 
   var collection,
       watched,
@@ -101,9 +121,10 @@ var WL = (function($){
           'genres' : elem.genres,
           'images' : elem.images,
           'year' : elem.year,        
-          'available' : true,
+          'collected' : true,
           'started' : false,
-          'completed': false
+          'completed': false,
+          'has_aired': true
       });
       getEpisode(data, elem.tvdb_id, 1, 1);
     })
@@ -131,22 +152,39 @@ var WL = (function($){
           e = rec.number,
           now = Math.round(+new Date()/1000);
 
-      if (show != null && s != undefined && e != undefined){
-        data.push({
+      if(show != null){
+        
+        var common = {
           'title' : title,
-          'season' : s,
-          'episode' : e,
-          'episode_title': rec.title,
-          'episode_image' : rec.images.screen,
           'genres' : show.genres,
           'images' : show.images,
           'year' : show.year,
-          'air_date' : rec.first_aired,
-          'has_aired' : ( now > rec.first_aired),
-          'available' : isEpisodeAvailable(show, s, e),
+          'collected' : isEpisodeAvailable(show, s, e) || (elem['progress']['percentage'] == 100),
           'started' : true,
-          'completed': (elem['progress']['percentage'] == 100)
-      });
+        }
+        
+        if (s != undefined && e != undefined){
+        
+          var has_aired = ( now > rec.first_aired)
+          
+          data.push($.extend({
+            'season' : s,
+            'episode' : e,
+            'episode_title': rec.title,
+            'episode_image' : rec.images.screen,
+            'air_date' : rec.first_aired,
+            'has_aired' : has_aired,
+            'completed': false
+          },common));
+        
+        } else {
+        
+          data.push($.extend({
+            'has_aired' : true,
+            'completed': (elem['progress']['percentage'] == 100)
+          },common));
+        
+        }
       }
     })
   }
@@ -195,7 +233,61 @@ var WL = (function($){
     var context = {shows : WL.data};
     var html     = template(context);
 
-    $('main').append(html);
+    var $main = $('main');
+    $main.append(html);
+    $(function(){
+      $('main').mixItUp({
+        animation: {
+            enable: true,
+            effects: 'fade scale',
+            duration: 600,
+            easing: 'ease',
+            perspectiveDistance: '3000',
+            perspectiveOrigin: '50% 50%',
+            queue: false,
+            queueLimit: 1,
+            animateChangeLayout: false,
+            animateResizeContainer: true,
+            animateResizeTargets: false,
+            staggerSequence: false,
+            reverseOut: false
+        },
+
+        callbacks: {
+            onMixLoad: false,
+            onMixStart: false,
+            onMixEnd: false,
+            onMixFail: false,
+            onMixBusy: false
+        },
+
+        controls: {
+            // enable: true,
+            // live: false,
+            toggleFilterButtons: true,
+            toggleLogic: 'and',
+            activeClass: 'active'
+        },
+
+        layout: {
+            display: 'block',
+            containerClass: '',
+            containerClassFail: 'fail'
+        },
+
+        load: {
+            filter: '.started',
+            sort: false
+        },
+
+        selectors: {
+            target: '.mix'
+            // filter: '.filter',
+            // sort: '.sort'
+        }
+      });  
+    });
+
   }
 
 // Helper Methods
@@ -262,3 +354,6 @@ var WL = (function($){
 })(jQuery);
 
 WL.init();
+
+
+less.watch();
