@@ -6,9 +6,29 @@
 <link rel="stylesheet/less" type="text/css" href="styles.less" />
 <body>
 
-<script id="recs-list" type="text/x-handlebars-template">
+<script id="shows-list" type="text/x-handlebars-template">
   {{#each shows}}
-    <img src="{{images.banner}}">
+    <img data-started={{#if started}}
+                          "true"
+                        {{else}}
+                          "false"
+                        {{/if}}
+         data-available={{#if available}}
+                          "true"
+                        {{else}}
+                          "false"
+                        {{/if}}
+        data-aired={{#if has_aired}}
+                          "true"
+                        {{else}}
+                          "false"
+                        {{/if}}
+        data-completed={{#if completed}}
+                          "true"
+                        {{else}}
+                          "false"
+                        {{/if}}
+        src="{{images.banner}}">
     {{!-- <img src="{{images.fanart}}"> --}}
     {{!-- <img src="{{images.poster}}"> --}}
   {{/each}}
@@ -22,12 +42,12 @@
 <script>
   less = {
     env: "development",
-    // async: false,
-    // fileAsync: false,
-    poll: 1000
-    // functions: {},
-    // dumpLineNumbers: "comments",
-    // relativeUrls: false
+    async: false,
+    fileAsync: false,
+    poll: 1000,
+    functions: {},
+    dumpLineNumbers: "comments",
+    relativeUrls: false
   };
 
 </script>
@@ -35,7 +55,7 @@
 <script type="text/javascript" src="scripts.js">
 </script>
 <script type="text/javascript">
-  less.watch();
+  // less.watch();
 </script>
 </body>
 </html>

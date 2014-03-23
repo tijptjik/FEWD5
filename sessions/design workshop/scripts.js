@@ -20,7 +20,7 @@ var WL = (function($){
 
   var collection,
       watched,
-      recs = [];
+      data = [];
 
   function getCollection(opts, callback){
     var opts = opts || {},
@@ -32,7 +32,7 @@ var WL = (function($){
     $.getJSON( url )
       .done(function( json ) {
         collection = json;
-        callback({username:username, collection:collection}, checkProgress)
+        callback({username:username, collection:collection}, mapData)
       })
       .fail(function( jqxhr, textStatus, error ) {
           logFail(jqxhr, textStatus, error );
@@ -44,29 +44,85 @@ var WL = (function($){
         titles = opts.titles || null,
         format = opts.format || API_FORMAT,
         collection = opts.collection || collection,
-        callback = callback || checkProgress,
+        callback = callback || mapData,
         url = [API_BASE, 'user/progress/watched.' + format, API_KEY, username, safeURL(titles)].join('/');
 
     $.getJSON( url )
       .done(function( json ) {
         watched = json;
-        callback({username : username, collection: collection, watched: json}, render)
+        callback({collection: collection, watched: json}, render)
       })
       .fail(function( jqxhr, textStatus, error ) {
         logFail(jqxhr, textStatus, error );
       });
   }
 
+  function getEpisode(data, tvdb_id, season, episode){
+    var url = [API_BASE, 'show/episode/summary.' + API_FORMAT, API_KEY, tvdb_id, season, episode].join('/');
+    $.getJSON( url )
+      .done(function( json ) {
+        var show = findShow(data, json.show.title),
+            now = Math.round(+new Date()/1000);
+               
+        show.episode_title = json.episode.title;
+        show.episode_image = json.episode.images.screen;
+        show.air_date = json.episode.first_aired;
+        show.has_aired = ( now > show.air_date);
+        
+      })
+      .fail(function( jqxhr, textStatus, error ) {
+        logFail(jqxhr, textStatus, error );
+      });
+  }
 
 // Data Manipulation Methods
 
-  function checkProgress(opts, callback){
+  function mapData(opts, callback){
     var opts = opts || {},
-        username = opts.username || TRAKT_USER,
         collection = opts.collection || collection,
         watched = opts.watched || watched,
         callback = callback || render;
 
+    data = mapCollection(collection, watched, data);
+    data = mapWatched(watched, data);
+   
+    callback(data);
+  }
+
+  function mapCollection(collection, watched, data){
+
+    var unstarted = filterUnstarted(collection, watched);
+
+    unstarted.forEach(function(elem, i){
+      data.push({
+          'title' : elem.title,
+          'season' : 1,
+          'episode' : 1,
+          'genres' : elem.genres,
+          'images' : elem.images,
+          'year' : elem.year,        
+          'available' : true,
+          'started' : false,
+          'completed': false
+      });
+      getEpisode(data, elem.tvdb_id, 1, 1);
+    })
+
+    return data;
+  }
+
+  function filterUnstarted(collection, watched){
+    var showIDs = {}
+    watched.forEach(function(obj){
+      showIDs[obj.show.tvdb_id] = obj;
+    });
+
+    return collection.filter(function(obj){
+      return !(obj.tvdb_id in showIDs);
+    });
+  }
+
+  function mapWatched(watched, data){
     watched.forEach(function(elem,i){
       var title = elem['show'].title,
           show = findShow(collection, title),
@@ -74,31 +130,32 @@ var WL = (function($){
           s = rec.season,
           e = rec.number,
           now = Math.round(+new Date()/1000);
+
       if (show != null && s != undefined && e != undefined){
-        recs.push({
+        data.push({
           'title' : title,
           'season' : s,
           'episode' : e,
           'episode_title': rec.title,
           'episode_image' : rec.images.screen,
-          'stats' : elem['stats'],
-          'genre' : show.genres,
+          'genres' : show.genres,
           'images' : show.images,
           'year' : show.year,
-          'available' : isEpisodeAvailable(show, s, e),
+          'air_date' : rec.first_aired,
           'has_aired' : ( now > rec.first_aired),
-          'air_date' : rec.first_aired
-        });
+          'available' : isEpisodeAvailable(show, s, e),
+          'started' : true,
+          'completed': (elem['progress']['percentage'] == 100)
+      });
       }
     })
-    callback(recs);
   }
 
-  function findShow(collection, title){
+  function findShow(arr, title){
     var result = null;
-    for (var i = 0; i < collection.length; i++) {
-      if (collection[i]['title'] === title){
-          result = collection[i];
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i]['title'] === title){
+          result = arr[i];
         };
       };
     return result;
@@ -131,11 +188,11 @@ var WL = (function($){
     return availability
   }
 
-  function render(recs){
+  function render(data){
 
-    var source   = $("#recs-list").html();
+    var source   = $("#shows-list").html();
     var template = Handlebars.compile(source);
-    var context = {shows : recs};
+    var context = {shows : WL.data};
     var html     = template(context);
 
     $('main').append(html);
@@ -148,11 +205,14 @@ var WL = (function($){
     console.log( "Request Failed: " + err );
   }
 
-  function safeURL(arr){
-    if (arr != null){
-      param = arr.join(',').replace(' ','-');
+  function safeURL(query){
+    var param = null;
+    if (typeof query === "string"){
+      param = query.replace(/\s/g,'-').toLowerCase();
     } else {
-      param = null;
+      if (query != null){
+        param = query.join(',').replace(/\s/g,'-');
+      }
     }
     return param;
   }
@@ -194,7 +254,7 @@ var WL = (function($){
 // Public API
 
   return {
-    recommendations : recs,
+    data : data,
     torrent: torrent,
     init : init
   }
