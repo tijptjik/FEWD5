@@ -100,10 +100,7 @@ var WL = (function($){
       .done(function( json ) {
         data = json;
         callback(json);
-      })
-      .fail(function( jqxhr, textStatus, error ) {
-        logFail(jqxhr, textStatus, error );
-      });
+      }
   }
 
 // Data Manipulation Methods
@@ -244,18 +241,16 @@ var WL = (function($){
     var $main    = $('main');
     var source   = $("#shows-list").html();
     var template = Handlebars.compile(source);
-    var context  = {shows : data};
+    var context  = {shows : WL.data};
     var html     = template(context);
     $main.append(html);
     
     var $info    = $('#info');
     var source   = $("#info-panel").html();
     var template = Handlebars.compile(source);
-    var context  = {shows : data};
+    var context  = {shows : WL.data};
     var html     = template(context);
     $info.append(html);
-
-    console.log(data);
     
     $(function(){
       $('main').mixItUp({
@@ -284,7 +279,7 @@ var WL = (function($){
         },
 
         controls: {
-            enable: true,
+            // enable: false,
             // live: false,
             toggleFilterButtons: true,
             toggleLogic: 'and',
@@ -298,7 +293,7 @@ var WL = (function($){
         },
 
         load: {
-            filter: '.started',
+            filter: '',
             sort: false
         },
 
@@ -379,23 +374,3 @@ var WL = (function($){
 WL.init();
 
 // less.watch();
-
-$('main').on('mouseenter','.mix',function(){
-  $this = $(this);
-  var target = $this.data('target');
-  $('#' + target).siblings('div').hide();
-  $('#' + target).show();
-  $('#info').animate({
-      'margin-bottom' : 0
-  }, 350, function() {
-    // Animation complete.
-  })
-});
-
-$('main').on('mouseleave','.mix',function(){
-    $('#info').animate({
-      'margin-bottom' : '-25rem'
-  }, 350, function() {
-    // Animation complete.
-  })
-})

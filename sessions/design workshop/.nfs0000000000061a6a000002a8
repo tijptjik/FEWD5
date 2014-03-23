@@ -383,6 +383,7 @@ WL.init();
 $('main').on('mouseenter','.mix',function(){
   $this = $(this);
   var target = $this.data('target');
+  console.log('#' + target);
   $('#' + target).siblings('div').hide();
   $('#' + target).show();
   $('#info').animate({
@@ -391,11 +392,3 @@ $('main').on('mouseenter','.mix',function(){
     // Animation complete.
   })
 });
-
-$('main').on('mouseleave','.mix',function(){
-    $('#info').animate({
-      'margin-bottom' : '-25rem'
-  }, 350, function() {
-    // Animation complete.
-  })
-})

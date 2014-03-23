@@ -398,4 +398,5 @@ $('main').on('mouseleave','.mix',function(){
   }, 350, function() {
     // Animation complete.
   })
-})
+
+}

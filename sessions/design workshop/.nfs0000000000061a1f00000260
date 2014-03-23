@@ -5,23 +5,29 @@
 </head>
 <link rel="stylesheet/less" type="text/css" href="styles.less" />
 <body>
-<hr/>
 
 <script id="shows-list" type="text/x-handlebars-template">
   {{#each shows}}
-    <div data-target="{{tvdb_id}}" class="mix 
+    <div class="mix 
       {{#if started}}started{{/if}} 
       {{#if collected}}collected{{/if}} 
       {{#if has_aired}}aired{{/if}} 
       {{#if completed}}completed{{/if}}">
-      <img src="{{images.banner}}">
+    <img src="{{images.banner}}">
+    <footer>
+      <h2>{{episode_title}}</h2>
+      <img src="{{episode_image}}">
+      <p>{{air_date}}</p>
+    </footer>
     </div>
+    {{!-- <img src="{{images.fanart}}"> --}}
+    {{!-- <img src="{{images.poster}}"> --}}
   {{/each}}
 </script>
 
 <script id="info-panel" type="text/x-handlebars-template">
   {{#each shows}}
-    <div id="{{tvdb_id}}">
+    <div>
       <h2>{{episode_title}}</h2>
       <img src="{{episode_image}}">
       <p>{{air_date}}</p>
@@ -29,6 +35,7 @@
   {{/each}}
 </script>
 
+<hr/>
 <main>
   <div class="navbar">
       <nav>
@@ -58,6 +65,7 @@
     dumpLineNumbers: "comments",
     relativeUrls: false
   };
+
 </script>
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.0/less.min.js"></script>
 <script type="text/javascript" src="scripts.js">

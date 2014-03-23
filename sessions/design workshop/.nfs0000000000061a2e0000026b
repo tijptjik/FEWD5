@@ -123,18 +123,7 @@ hr:before {
 
 #info {
 	display: block;
-	position: fixed;
-	bottom:0px;
-	height: 200px;
-	margin-bottom: -200px;
-	margin-left: -38.9rem;
-	background-color: black;
-	padding: 24px;
-	left: 50%;
-	width: 77.8rem;
-
 }
-
 #info div{
-	display: none;
+	display: block;
 }

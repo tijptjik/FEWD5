@@ -5,35 +5,26 @@
 </head>
 <link rel="stylesheet/less" type="text/css" href="styles.less" />
 <body>
-<hr/>
 
 <script id="shows-list" type="text/x-handlebars-template">
   {{#each shows}}
-    <div data-target="{{tvdb_id}}" class="mix 
+    <div class="mix 
       {{#if started}}started{{/if}} 
       {{#if collected}}collected{{/if}} 
       {{#if has_aired}}aired{{/if}} 
       {{#if completed}}completed{{/if}}">
-      <img src="{{images.banner}}">
-    </div>
+    <img src="{{images.fanart}}"></div>
+    {{!-- <img src="{{images.fanart}}"> --}}
+    {{!-- <img src="{{images.poster}}"> --}}
   {{/each}}
-</script>
 
-<script id="info-panel" type="text/x-handlebars-template">
-  {{#each shows}}
-    <div id="{{tvdb_id}}">
-      <h2>{{episode_title}}</h2>
-      <img src="{{episode_image}}">
-      <p>{{air_date}}</p>
-    </div>
-  {{/each}}
 </script>
-
+<hr/>
 <main>
   <div class="navbar">
       <nav>
       <!-- <a href="#" class="button filter" data-filter=".aired">Aired</a> -->
-      <a href="#" class="button" data-filter=".collected">Collected</a>
+      <a href="#" class="button filter" data-filter=".collected">Collected</a>
       <a href="#" class="button filter" data-filter=".started">Started</a>
       <a href="#" class="button filter" data-filter=".completed">Completed</a>
       <a href="#" class="button filter filter-x" data-filter=".aired.started:not(.collected)">Not Collected</a>
@@ -41,9 +32,6 @@
     </nav>
   </div>
 </main>
-<section id="info">
-  
-</section>
 
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
@@ -58,6 +46,7 @@
     dumpLineNumbers: "comments",
     relativeUrls: false
   };
+
 </script>
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.0/less.min.js"></script>
 <script type="text/javascript" src="scripts.js">

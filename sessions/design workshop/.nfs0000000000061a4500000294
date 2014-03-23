@@ -21,7 +21,7 @@
 
 <script id="info-panel" type="text/x-handlebars-template">
   {{#each shows}}
-    <div id="{{tvdb_id}}">
+    <div id="#{{tvdb_id}}">
       <h2>{{episode_title}}</h2>
       <img src="{{episode_image}}">
       <p>{{air_date}}</p>

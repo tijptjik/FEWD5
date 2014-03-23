@@ -21,7 +21,7 @@
 
 <script id="info-panel" type="text/x-handlebars-template">
   {{#each shows}}
-    <div id="{{tvdb_id}}">
+    <div id="#{{tvdb_id}}">
       <h2>{{episode_title}}</h2>
       <img src="{{episode_image}}">
       <p>{{air_date}}</p>
@@ -58,6 +58,7 @@
     dumpLineNumbers: "comments",
     relativeUrls: false
   };
+
 </script>
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.0/less.min.js"></script>
 <script type="text/javascript" src="scripts.js">

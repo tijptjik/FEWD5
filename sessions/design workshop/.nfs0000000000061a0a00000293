@@ -383,19 +383,11 @@ WL.init();
 $('main').on('mouseenter','.mix',function(){
   $this = $(this);
   var target = $this.data('target');
-  $('#' + target).siblings('div').hide();
-  $('#' + target).show();
+  console.log(target);
+  $('#info').find('#' + target).show();
   $('#info').animate({
-      'margin-bottom' : 0
-  }, 350, function() {
+      'margin-bottom' : "toggle"
+  }, 5000, function() {
     // Animation complete.
   })
 });
-
-$('main').on('mouseleave','.mix',function(){
-    $('#info').animate({
-      'margin-bottom' : '-25rem'
-  }, 350, function() {
-    // Animation complete.
-  })
-})

@@ -21,15 +21,15 @@
 
 // Aired, Collected, Started, Completed
 
-// [!,O,O,O] = (unreleased) :not(.aired) ~ @red
+// [O,O,O,O] = (unreleased) :not(.aired) ~ @red
 // [X,O,O,O] = .aired ~ none
-// [X,X,!,!] = .collected ~ @navy
-// [X,X,X,!] = .started ~ @blue
+// [X,X,O,O] = .collected ~ @navy
+// [X,X,X,O] = .started ~ @blue
 // [X,X,X,X] = .completed ~ @grey
 
-// [X,!,X,!] = .aired:not(.collected).started (uncollected) ~ @red
-// [X,X,!,!] = .aired.collected:not(.started) (unstarted) ~ @green
-// [X,O,X,!] = .collected:not(.completed) (started, not completed) ~ @yellow
+// [X,!,X,O] = .aired:not(.collected).started (uncollected) ~ @red
+// [X,X,!,O] = .aired.collected:not(.started) (unstarted) ~ @green
+// [O,O,X,!] = .collected:not(.completed) (started, not completed) ~ @yellow
 
 var WL = (function($){
   var API_KEY = '8bde53c3108a625150ddd2b974395280',
@@ -95,17 +95,6 @@ var WL = (function($){
       });
   }
 
-  function getCachedData(callback){
-    $.getJSON( 'data.json' )
-      .done(function( json ) {
-        data = json;
-        callback(json);
-      })
-      .fail(function( jqxhr, textStatus, error ) {
-        logFail(jqxhr, textStatus, error );
-      });
-  }
-
 // Data Manipulation Methods
 
   function mapData(opts, callback){
@@ -135,8 +124,7 @@ var WL = (function($){
           'collected' : true,
           'started' : false,
           'completed': false,
-          'has_aired': true,
-          'tvdb_id': elem.tvdb_id
+          'has_aired': true
       });
       getEpisode(data, elem.tvdb_id, 1, 1);
     })
@@ -173,7 +161,6 @@ var WL = (function($){
           'year' : show.year,
           'collected' : isEpisodeAvailable(show, s, e) || (elem['progress']['percentage'] == 100),
           'started' : true,
-          'tvdb_id': show.tvdb_id
         }
         
         if (s != undefined && e != undefined){
@@ -244,19 +231,10 @@ var WL = (function($){
     var $main    = $('main');
     var source   = $("#shows-list").html();
     var template = Handlebars.compile(source);
-    var context  = {shows : data};
+    var context  = {shows : WL.data};
     var html     = template(context);
-    $main.append(html);
-    
-    var $info    = $('#info');
-    var source   = $("#info-panel").html();
-    var template = Handlebars.compile(source);
-    var context  = {shows : data};
-    var html     = template(context);
-    $info.append(html);
 
-    console.log(data);
-    
+    $main.append(html);
     $(function(){
       $('main').mixItUp({
         animation: {
@@ -284,7 +262,7 @@ var WL = (function($){
         },
 
         controls: {
-            enable: true,
+            enable: false,
             // live: false,
             toggleFilterButtons: true,
             toggleLogic: 'and',
@@ -298,7 +276,7 @@ var WL = (function($){
         },
 
         load: {
-            filter: '.started',
+            filter: '',
             sort: false
         },
 
@@ -362,8 +340,7 @@ var WL = (function($){
   }
 
   function init(){
-    // getCollection()
-    getCachedData(render);
+    getCollection()
   }
 
 // Public API
@@ -378,24 +355,5 @@ var WL = (function($){
 
 WL.init();
 
-// less.watch();
 
-$('main').on('mouseenter','.mix',function(){
-  $this = $(this);
-  var target = $this.data('target');
-  $('#' + target).siblings('div').hide();
-  $('#' + target).show();
-  $('#info').animate({
-      'margin-bottom' : 0
-  }, 350, function() {
-    // Animation complete.
-  })
-});
-
-$('main').on('mouseleave','.mix',function(){
-    $('#info').animate({
-      'margin-bottom' : '-25rem'
-  }, 350, function() {
-    // Animation complete.
-  })
-})
+less.watch();
