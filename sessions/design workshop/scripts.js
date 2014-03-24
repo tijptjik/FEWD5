@@ -1,42 +1,42 @@
-// THE COMPLETIONIST'S EPISODE SELECTION APP
-//
-// Open Chrome with 'google-chrome --disable-web-security'
-//
-// Retrieve shows which the user is watching
-// --> https://trakt.tv/api-docs/user-library-shows-collection
-//     http://api.trakt.tv/user/library/shows/collection.format/apikey/username
-// Retrieve collection progress for the shows the user is watching
-// --> https://trakt.tv/api-docs/user-progress-collected
-//     http://api.trakt.tv/user/progress/watched.format/apikey/username/title/sort/extended
-// Suggest a next episode to watch.
-// --> https://trakt.tv/api-docs/show-episode-stats
-//     http://api.trakt.tv/show/episode/stats.format/apikey/title/season/episode
-//
-// Genres ["Animation", "Children", "Drama", "Horror", "Thriller", "Suspense",
-//         "Fantasy", "Comedy", "Action", "Adventure", "Mini Series", "Science Fiction",
-//         "Crime", "Documentary", "Mystery", "Western", "Family"]
-//
-// Genres: Science Fiction, Crime, Drama
+THE COMPLETIONIST'S EPISODE SELECTION APP
+
+Open Chrome with 'google-chrome --disable-web-security'
+
+Retrieve shows which the user is watching
+--> https://trakt.tv/api-docs/user-library-shows-collection
+    http://api.trakt.tv/user/library/shows/collection.format/apikey/username
+Retrieve collection progress for the shows the user is watching
+--> https://trakt.tv/api-docs/user-progress-collected
+    http://api.trakt.tv/user/progress/watched.format/apikey/username/title/sort/extended
+Suggest a next episode to watch.
+--> https://trakt.tv/api-docs/show-episode-stats
+    http://api.trakt.tv/show/episode/stats.format/apikey/title/season/episode
+
+Genres ["Animation", "Children", "Drama", "Horror", "Thriller", "Suspense",
+        "Fantasy", "Comedy", "Action", "Adventure", "Mini Series", "Science Fiction",
+        "Crime", "Documentary", "Mystery", "Western", "Family"]
+
+Genres: Science Fiction, Crime, Drama
 
 
-// Aired, Collected, Started, Completed
+Aired, Collected, Started, Completed
 
-// [!,O,O,O] = (unreleased) :not(.aired) ~ @red
-// [X,O,O,O] = .aired ~ none
-// [X,X,!,!] = .collected ~ @navy
-// [X,X,X,!] = .started ~ @blue
-// [X,X,X,X] = .completed ~ @grey
+[!,O,O,O] = (unreleased) :not(.aired) ~ @red
+[X,O,O,O] = .aired ~ none
+[X,X,!,!] = .collected ~ @navy
+[X,X,X,!] = .started ~ @blue
+[X,X,X,X] = .completed ~ @grey
 
-// [X,!,X,!] = .aired:not(.collected).started (uncollected) ~ @red
-// [X,X,!,!] = .aired.collected:not(.started) (unstarted) ~ @green
-// [X,O,X,!] = .collected:not(.completed) (started, not completed) ~ @yellow
+[X,!,X,!] = .aired:not(.collected).started (uncollected) ~ @red
+[X,X,!,!] = .aired.collected:not(.started) (unstarted) ~ @green
+[X,O,X,!] = .collected:not(.completed) (started, not completed) ~ @yellow
 
-// Licenses:
-//
-// Creative Commons – Attribution (CC BY 3.0) 
-// Magnet designed by Mister Pixel from the Noun Project
-// 
-//
+Licenses:
+
+Creative Commons – Attribution (CC BY 3.0) 
+Magnet designed by Mister Pixel from the Noun Project
+
+
 
 jQuery.easing.def = "easeInOutQuart";
 
@@ -352,11 +352,16 @@ var WL = (function($){
   }
 
   function findEpisode(id){
-    return {
-      title : '',
-      s     : '',
-      e     : ''
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].tvdb_id === id) {
+        return {
+          title : data[i].title,
+          s     : data[i].season,
+          e     : data[i].episode
+        }
+      }
     }
+    
   }
 
   function torrent(opts){
@@ -408,7 +413,7 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
 
 $('main').on('mouseleave','.mix:not(.completed)',function(){
     $('#info').delay( 1200 ).stop().animate({
-      // 'margin-bottom' : '-31rem'
+      'margin-bottom' : '-31rem'
   }, 350, function() {
     // Animation complete.
   })
@@ -419,7 +424,7 @@ $('main').on('click','.aired:not(.collected,.completed)',function(e){
   console.log('Downloading Torrents');
   var tvdb_id = $(this).parent().data('target');
   var params = WL.search(tvdb_id);
-  WL.torrent()
+  WL.torrent(params);
 })
 
 
