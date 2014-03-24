@@ -124,22 +124,17 @@ nav .button.filter-x {
 	position: fixed;
 	bottom:0px;
 	height: 25rem;
-	margin-bottom: -31rem;
-	margin-left: -41.6rem;
+	margin-bottom: -25rem;
+	margin-left: -38.9rem;
 	background-color: black;
 	padding: 24px;
 	left: 50%;
 	width: 77.8rem;
-	border: solid 0.5rem @grey;
-	border-bottom: none;
-
 }
 
 #info div {
 	display: none;
-}
-#info div img {
-	float: right;
+	border: solid 0.5rem @grey;
 }
 
 // .aired:not(.collected,.completed):hover img{

@@ -196,7 +196,6 @@ var WL = (function($){
             'episode_image' : rec.images.screen,
             'air_date' : rec.first_aired,
             'has_aired' : has_aired,
-            'days_till_airdate' : daysTillAirdata(rec.first_aired),
             'completed': false
           },common));
         
@@ -265,8 +264,8 @@ var WL = (function($){
     var html     = template(context);
     $info.append(html);
 
-    $('.aired:not(.collected,.completed)').addClass('torrent')
-    // .append('<div class="torrent"></div>')
+    $('.aired:not(.collected)')
+    .append('<div class="torrent"></div>')
    
     $(function(){
       $('main').mixItUp({
@@ -394,6 +393,21 @@ var WL = (function($){
     getCachedData(render);
   }
 
+// Public API
+
+  return {
+    data : getData,
+    torrent: torrent,
+    search: findEpisode,
+    init : init
+  }
+
+})(jQuery);
+
+WL.init();
+
+less.watch();
+
 // Event Handlers
 
 $('main').on('mouseenter','.mix:not(.completed)',function(){
@@ -410,57 +424,20 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
 
 $('main').on('mouseleave','.mix:not(.completed)',function(){
     $('#info').delay( 1200 ).stop().animate({
-      'margin-bottom' : '-31rem'
+      'margin-bottom' : '-25rem'
   }, 350, function() {
     // Animation complete.
   })
 })
 
-$('main').on('click','.aired:not(.collected,.completed)',function(e){
+$('main').on('click','.torrent',function(e){
   e.preventDefault();
-  console.log('Downloading Torrents');
   var tvdb_id = $(this).parent().data('target');
   var params = WL.search(tvdb_id);
   WL.torrent()
+  $('#info').delay( 1200 ).stop().animate({
+      'margin-bottom' : '-25rem'
+  }, 350, function() {
+    // Animation complete.
+  })
 })
-
-
-$('main').on('mouseenter','.aired:not(.collected,.completed)',function(){
-  $(this).find('img').stop().transition({
-    perspective: '500rem',
-    rotateY: '40deg',
-    // opacity: 0.3,
-    background: 'none',
-    scale : 1.2,
-    duration: 500,
-    complete: function() { /* ... */ }
-  });
-});
-
-$('main').on('mouseleave','.aired:not(.collected,.completed)',function(){
-  $(this).find('img').stop().transition({
-    perspective: '500rem',
-    rotateY: '0deg',
-    // opacity: 1,
-    scale : 1.0,
-    duration: 500,
-    complete: function() { /* ... */ }
-  });
-});
-
-// Public API
-
-  return {
-    data : getData,
-    torrent: torrent,
-    search: findEpisode,
-    init : init
-  }
-
-})(jQuery);
-
-$(function(){WL.init()});
-
-less.watch();
-
-

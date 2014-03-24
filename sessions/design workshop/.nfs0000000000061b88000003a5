@@ -28,7 +28,6 @@
     </header>
       <img src="{{episode_image}}">
       <p>{{air_date}}</p>
-      <p>{{days_till_airdate}}</p>
     </div>
   {{/each}}
 </script>

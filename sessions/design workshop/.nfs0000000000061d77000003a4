@@ -196,7 +196,6 @@ var WL = (function($){
             'episode_image' : rec.images.screen,
             'air_date' : rec.first_aired,
             'has_aired' : has_aired,
-            'days_till_airdate' : daysTillAirdata(rec.first_aired),
             'completed': false
           },common));
         
@@ -410,7 +409,7 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
 
 $('main').on('mouseleave','.mix:not(.completed)',function(){
     $('#info').delay( 1200 ).stop().animate({
-      'margin-bottom' : '-31rem'
+      // 'margin-bottom' : '-31rem'
   }, 350, function() {
     // Animation complete.
   })

@@ -410,7 +410,7 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
 
 $('main').on('mouseleave','.mix:not(.completed)',function(){
     $('#info').delay( 1200 ).stop().animate({
-      'margin-bottom' : '-31rem'
+      // 'margin-bottom' : '-31rem'
   }, 350, function() {
     // Animation complete.
   })

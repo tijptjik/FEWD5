@@ -31,15 +31,6 @@
 // [X,X,!,!] = .aired.collected:not(.started) (unstarted) ~ @green
 // [X,O,X,!] = .collected:not(.completed) (started, not completed) ~ @yellow
 
-// Licenses:
-//
-// Creative Commons – Attribution (CC BY 3.0) 
-// Magnet designed by Mister Pixel from the Noun Project
-// 
-//
-
-jQuery.easing.def = "easeInOutQuart";
-
 var WL = (function($){
   var API_KEY = '8bde53c3108a625150ddd2b974395280',
       API_BASE = 'http://api.trakt.tv',
@@ -196,7 +187,6 @@ var WL = (function($){
             'episode_image' : rec.images.screen,
             'air_date' : rec.first_aired,
             'has_aired' : has_aired,
-            'days_till_airdate' : daysTillAirdata(rec.first_aired),
             'completed': false
           },common));
         
@@ -265,9 +255,8 @@ var WL = (function($){
     var html     = template(context);
     $info.append(html);
 
-    $('.aired:not(.collected,.completed)').addClass('torrent')
-    // .append('<div class="torrent"></div>')
-   
+    console.log(data);
+    
     $(function(){
       $('main').mixItUp({
         animation: {
@@ -351,24 +340,11 @@ var WL = (function($){
         s = num+"";
     while (s.length < size) s = "0" + s;
     return s;
-  }
+}
 
-  function findEpisode(id){
-    return {
-      title : '',
-      s     : '',
-      e     : ''
-    }
-  }
-
-  function torrent(opts){
-    var opts = opts || {},
-        title = opts.title || '', 
-        s  = opts.s || 1,
-        e  = opts.e || 1 ,
-        quality = opts.quality || '720p';
-
-    var url = 'http://kickass.to/usearch/' + title + '%20s' + pad(s) + 'e' + pad(e) + '%20' + quality +'/?field=seeders&sorder=desc';
+  function torrent(title, s, e, quality){
+    var quality = quality || '720p',
+        url = 'http://kickass.to/usearch/' + title + '%20s' + pad(s) + 'e' + pad(e) + '%20' + quality +'/?field=seeders&sorder=desc';
     $.get(url).done(function(data, textStatus, jqXHR, magnet) {
       var magnet = $(data).find('[title="Torrent magnet link"]').attr('href');
       OpenInNewTab(magnet);
@@ -385,18 +361,26 @@ var WL = (function($){
     return Math.floor(remaining_secs / 86400);
   }
 
-  function getData(){
-    return data;
-  }
-
   function init(){
     // getCollection()
     getCachedData(render);
   }
 
-// Event Handlers
+// Public API
 
-$('main').on('mouseenter','.mix:not(.completed)',function(){
+  return {
+    data : data,
+    torrent: torrent,
+    init : init
+  }
+
+})(jQuery);
+
+WL.init();
+
+// less.watch();
+
+$('main').on('mouseenter','.mix',function(){
   $this = $(this);
   var target = $this.data('target');
   $('#' + target).siblings('div').hide();
@@ -408,59 +392,10 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
   })
 });
 
-$('main').on('mouseleave','.mix:not(.completed)',function(){
-    $('#info').delay( 1200 ).stop().animate({
-      'margin-bottom' : '-31rem'
+$('main').on('mouseleave','.mix',function(){
+    $('#info').stop().delay( 1200 ).animate({
+      'margin-bottom' : '-25rem'
   }, 350, function() {
     // Animation complete.
   })
 })
-
-$('main').on('click','.aired:not(.collected,.completed)',function(e){
-  e.preventDefault();
-  console.log('Downloading Torrents');
-  var tvdb_id = $(this).parent().data('target');
-  var params = WL.search(tvdb_id);
-  WL.torrent()
-})
-
-
-$('main').on('mouseenter','.aired:not(.collected,.completed)',function(){
-  $(this).find('img').stop().transition({
-    perspective: '500rem',
-    rotateY: '40deg',
-    // opacity: 0.3,
-    background: 'none',
-    scale : 1.2,
-    duration: 500,
-    complete: function() { /* ... */ }
-  });
-});
-
-$('main').on('mouseleave','.aired:not(.collected,.completed)',function(){
-  $(this).find('img').stop().transition({
-    perspective: '500rem',
-    rotateY: '0deg',
-    // opacity: 1,
-    scale : 1.0,
-    duration: 500,
-    complete: function() { /* ... */ }
-  });
-});
-
-// Public API
-
-  return {
-    data : getData,
-    torrent: torrent,
-    search: findEpisode,
-    init : init
-  }
-
-})(jQuery);
-
-$(function(){WL.init()});
-
-less.watch();
-
-

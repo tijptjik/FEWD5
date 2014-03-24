@@ -138,9 +138,6 @@ nav .button.filter-x {
 #info div {
 	display: none;
 }
-#info div img {
-	float: right;
-}
 
 // .aired:not(.collected,.completed):hover img{
 // 	background-image: url(magnet.png);
