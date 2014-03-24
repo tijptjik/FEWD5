@@ -22,28 +22,30 @@
 <script id="info-panel" type="text/x-handlebars-template">
   {{#each shows}}
     <div id="{{tvdb_id}}">
+    <h2 id="nexttag">Next episode</h2>
+    <div id="right-triangle"></div>
     <header>
       <h1>{{title}}</h1>
-      <h2>{{episode_title}} <span>Season: {{season}} </span><span>Episode: {{episode}} </span></h2>
-    </header>
-      <img src="{{episode_image}}">
+      <h2><span>Season {{season}}  &nbsp&nbsp|&nbsp&nbsp  </span><span>Episode {{episode}} </span> <br><br> <span id="episodetitle">'{{episode_title}}' <span></h2>
       <p>{{air_date}}</p>
       <p>{{days_till_airdate}}</p>
+    </header>
+      <img class = "episodeimage" src="{{episode_image}}">
     </div>
   {{/each}}
 </script>
 
+<div class="navbar">
+    <nav>
+    <!-- <a href="#" class="button filter" data-filter=".aired">Aired</a> -->
+    <a href="#" class="button" data-filter=".collected">Collected</a>
+    <a href="#" class="button filter" data-filter=".started">Started</a>
+    <a href="#" class="button filter" data-filter=".completed">Completed</a>
+    <a href="#" class="button filter filter-x" data-filter=".aired.started:not(.collected)">Not Collected</a>
+    <a href="#" class="button filter filter-x" data-filter=".aired.collected:not(.started)">Not Started</a>
+  </nav>
+</div>
 <main>
-  <div class="navbar">
-      <nav>
-      <!-- <a href="#" class="button filter" data-filter=".aired">Aired</a> -->
-      <a href="#" class="button" data-filter=".collected">Collected</a>
-      <a href="#" class="button filter" data-filter=".started">Started</a>
-      <a href="#" class="button filter" data-filter=".completed">Completed</a>
-      <a href="#" class="button filter filter-x" data-filter=".aired.started:not(.collected)">Not Collected</a>
-      <a href="#" class="button filter filter-x" data-filter=".aired.collected:not(.started)">Not Started</a>
-    </nav>
-  </div>
 </main>
 <section id="info">
   

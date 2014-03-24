@@ -265,8 +265,6 @@ var WL = (function($){
     var html     = template(context);
     $info.append(html);
 
-    $('.aired:not(.collected,.completed)').addClass('torrent')
-    // .append('<div class="torrent"></div>')
    
     $(function(){
       $('main').mixItUp({
@@ -410,7 +408,7 @@ $('main').on('mouseenter','.mix:not(.completed)',function(){
 
 $('main').on('mouseleave','.mix:not(.completed)',function(){
     $('#info').delay( 1200 ).stop().animate({
-      'margin-bottom' : '-31rem'
+      // 'margin-bottom' : '-31rem'
   }, 350, function() {
     // Animation complete.
   })
